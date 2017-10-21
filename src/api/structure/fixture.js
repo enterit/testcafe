@@ -3,7 +3,7 @@ import handleTagArgs from '../../utils/handle-tag-args';
 import TestingUnit from './testing-unit';
 import wrapTestFunction from '../wrap-test-function';
 
-export default class Fixture extends TestingUnit {
+class Fixture extends TestingUnit {
     constructor (testFile) {
         super(testFile);
 
@@ -65,3 +65,5 @@ export default class Fixture extends TestingUnit {
 }
 
 TestingUnit._makeAPIListForChildClass(Fixture);
+
+export default Fixture;

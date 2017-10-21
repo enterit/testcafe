@@ -4,7 +4,7 @@ import { delegateAPI, getDelegatedAPIList } from '../../utils/delegated-api';
 import { assertType, is } from '../../errors/runtime/type-assertions';
 
 
-export default class TestingUnit {
+class TestingUnit {
     constructor (testFile) {
         this.testFile = testFile;
 
@@ -73,4 +73,4 @@ export default class TestingUnit {
 
 TestingUnit.API_LIST = getDelegatedAPIList(TestingUnit.prototype);
 
-
+export default TestingUnit;
