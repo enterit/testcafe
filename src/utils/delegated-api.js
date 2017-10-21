@@ -1,8 +1,11 @@
 const API_IMPLEMENTATION_METHOD_RE = /^_(\S+)\$(getter|setter)?$/;
 
 export function getDelegatedAPIList (src) {
-    return Object
-        .keys(src)
+    // ES6 class functions are not iterable, they are not included in the result of Object.keys(prototype) call
+    // need to combine with Object.getOwnPropertyNames(prototype), so that this would work for newer JS versions
+    var propertyNames = Object.keys(src).concat(Object.getOwnPropertyNames(src));
+
+    return propertyNames
         .map(prop => {
             var match = prop.match(API_IMPLEMENTATION_METHOD_RE);
 
