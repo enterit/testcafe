@@ -1,8 +1,7 @@
 {
   "compact": false,
   "presets": [
-    ["env", { "loose": true }],
-    "babel-preset-stage-2"
+    ["env", { "targets": { "node": "current" } }]
   ],
   "plugins": [
     "transform-runtime",
