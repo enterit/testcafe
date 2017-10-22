@@ -26,6 +26,8 @@ export default {
 
     asyncTestRunIdMap: new Map(),
 
+    currentContextTestRunId: null,
+
     _createContextSwitchingFunctionHook (ctxSwitchingFn, patchedArgsCount) {
         var tracker = this;
 
@@ -106,6 +108,8 @@ export default {
     },
 
     getContextTestRunId () {
+        if (this.currentContextTestRunId) return this.currentContextTestRunId;
+
         var asyncTestRunId = this.asyncTestRunIdMap.get(asyncHooks.executionAsyncId());
 
         if (asyncTestRunId) return asyncTestRunId;
@@ -126,6 +130,16 @@ export default {
         }
 
         return null;
+    },
+
+    // Storing context test run id manually is used as a workaround that enables async/await code working from console.
+    // In case of console the marker function name is not present in the call stack, so it cannot be used.
+    storeContextTestRunId () {
+        this.currentContextTestRunId = this.getContextTestRunId();
+    },
+
+    clearContextTestRunId () {
+        this.currentContextTestRunId = null;
     },
 
     resolveContextTestRun () {

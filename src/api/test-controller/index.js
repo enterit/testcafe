@@ -4,6 +4,7 @@ import { getCallsiteForMethod } from '../../errors/get-callsite';
 import ClientFunctionBuilder from '../../client-functions/client-function-builder';
 import Assertion from './assertion';
 import { getDelegatedAPIList, delegateAPI } from '../../utils/delegated-api';
+import testRunTracker from '../test-run-tracker';
 
 import {
     ClickCommand,
@@ -264,6 +265,14 @@ export default class TestController {
 
     _useRole$ (role) {
         return this._enqueueCommand('useRole', UseRoleCommand, { role });
+    }
+
+    storeContextTestRunId () {
+        testRunTracker.storeContextTestRunId();
+    }
+
+    clearContextTestRunId () {
+        testRunTracker.clearContextTestRunId();
     }
 }
 
