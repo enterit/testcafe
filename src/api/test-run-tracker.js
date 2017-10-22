@@ -1,5 +1,6 @@
 import getStackFrames from 'callsite';
 import BabelPromise from 'babel-runtime/core-js/promise';
+import asyncHooks from 'async_hooks';
 
 const TRACKING_MARK_RE = /^\$\$testcafe_test_run\$\$(\S+)\$\$$/;
 const STACK_CAPACITY   = 5000;
@@ -22,6 +23,8 @@ export default {
     enabled: false,
 
     activeTestRuns: {},
+
+    asyncTestRunIdMap: new Map(),
 
     _createContextSwitchingFunctionHook (ctxSwitchingFn, patchedArgsCount) {
         var tracker = this;
@@ -68,6 +71,19 @@ export default {
                 global.Promise.prototype.catch = this._createContextSwitchingFunctionHook(global.Promise.prototype.catch, 1);
             }
 
+            var tracker = this;
+
+            asyncHooks.createHook({
+                init (asyncId) {
+                    var testRunId = tracker.getContextTestRunId();
+
+                    tracker.asyncTestRunIdMap.set(asyncId, testRunId);
+                },
+                destroy (asyncId) {
+                    tracker.asyncTestRunIdMap.delete(asyncId);
+                }
+            }).enable();
+
             this.enabled = true;
         }
     },
@@ -90,6 +106,10 @@ export default {
     },
 
     getContextTestRunId () {
+        var asyncTestRunId = this.asyncTestRunIdMap.get(asyncHooks.executionAsyncId());
+
+        if (asyncTestRunId) return asyncTestRunId;
+
         var frames = this._getStackFrames();
 
         // OPTIMIZATION: we start traversing from the bottom of the stack,
